@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Number Memory Game</title>
+<style>
+  body {
+    font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #fff;
+  }
+  h1 {
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 2.5em;
+    margin-bottom: 10px;
+  }
+  p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+  #numbers {
+    font-size: 2.5em;
+    font-weight: bold;
+    letter-spacing: 10px;
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    color: #333;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    min-width: 300px;
+  }
+  #inputs {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 25px;
+    border-radius: 15px;
+    display: inline-block;
+    margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  #inputs p {
+    color: #333;
+    margin-top: 0;
+  }
+  input {
+    width: 60px;
+    height: 60px;
+    margin: 5px;
+    padding: 5px;
+    font-size: 1.5em;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+  input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+    outline: none;
+  }
+  button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  button:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  #message {
+    font-size: 1.3em;
+    margin: 20px 0;
+    min-height: 30px;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    display: inline-block;
+  }
+  #score {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #4CAF50;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    display: inline-block;
+  }
+  .correct {
+    color: #4CAF50;
+  }
+  .incorrect {
+    color: #ff5252;
+  }
+</style>
+</head>
+<body>
+
+<h1>Number Memory Game</h1>
+<p>Memorize the 5 numbers shown below!</p>
+
+<div id="numbers"></div>
+<div id="inputs" style="display:none;">
+  <p>Enter the numbers you remember:</p>
+  <input type="number" id="num1">
+  <input type="number" id="num2">
+  <input type="number" id="num3">
+  <input type="number" id="num4">
+  <input type="number" id="num5">
+  <br>
+  <button onclick="checkNumbers()">Submit</button>
+</div>
+
+<div id="message"></div>
+<div id="score">Score: 0</div>
+
+<script>
+let score = 0;
+let numbers = [];
+
+// Generate 5 random numbers between 1-20
+function generateNumbers() {
+  numbers = [];
+  while (numbers.length < 5) {
+    let num = Math.floor(Math.random() * 20) + 1;
+    if (!numbers.includes(num)) numbers.push(num);
+  }
+  document.getElementById('numbers').textContent = numbers.join('  ');
+  document.getElementById('numbers').style.display = 'block';
+  document.getElementById('inputs').style.display = 'none';
+  document.getElementById('message').textContent = 'Memorize these numbers!';
+  document.getElementById('message').className = '';
+  
+  // Clear previous inputs
+  document.querySelectorAll('input').forEach(input => {
+    input.value = '';
+  });
+  
+  setTimeout(hideNumbers, 3000); // Show for 3 seconds
+}
+
+// Hide numbers and show input fields
+function hideNumbers() {
+  document.getElementById('numbers').style.display = 'none';
+  document.getElementById('inputs').style.display = 'block';
+  document.getElementById('message').textContent = 'Enter the numbers you remember:';
+  document.getElementById('message').className = '';
+  document.getElementById('num1').focus();
+}
+
+// Check user's input
+function checkNumbers() {
+  let userNums = [
+    parseInt(document.getElementById('num1').value) || 0,
+    parseInt(document.getElementById('num2').value) || 0,
+    parseInt(document.getElementById('num3').value) || 0,
+    parseInt(document.getElementById('num4').value) || 0,
+    parseInt(document.getElementById('num5').value) || 0
+  ];
+
+  let correctCount = 0;
+  let incorrectCount = 0;
+  
+  // Count correct and incorrect numbers
+  for (let i = 0; i < 5; i++) {
+    if (numbers.includes(userNums[i])) {
+      correctCount++;
+    } else if (userNums[i] !== 0) {
+      incorrectCount++;
+    }
+  }
+
+  // Calculate score (1 point for each correct number, -0.5 for each incorrect)
+  const roundScore = correctCount - (incorrectCount * 0.5);
+  score = Math.max(0, score + roundScore);
+  
+  // Update message with results
+  const message = document.getElementById('message');
+  message.innerHTML = `
+    <span class="correct">Correct: ${correctCount}</span> | 
+    <span class="incorrect">Incorrect: ${incorrectCount}</span>
+  `;
+  
+  // Update score display
+  document.getElementById('score').innerHTML = `Score: <span style="color: #4CAF50">${score.toFixed(1)}</span>`;
+
+  // Show the correct numbers for reference
+  document.getElementById('numbers').style.display = 'block';
+  document.getElementById('numbers').innerHTML = `
+    <div>Correct numbers were:</div>
+    <div style="font-size: 1.2em; margin: 10px 0;">${numbers.join('  ')}</div>
+  `;
+  
+  // Start next round after a delay
+  setTimeout(generateNumbers, 4000);
+}
+// Start game
+generateNumbers();
+</script>
+
+</body>
+</html>
+
+
+
